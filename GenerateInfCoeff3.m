@@ -1,4 +1,4 @@
-function [gamma] = GenerateInfCoeff2(geo)
+function [gamma2] = GenerateInfCoeff3(meo)
 
 % -------------------------------------------------------------------------
 % SwanVLM
@@ -14,25 +14,25 @@ function [gamma] = GenerateInfCoeff2(geo)
 
 
 % Pre-allocate influence co-effs matrix
-gamma.Influence_Coeffs_a = zeros(geo.PanelCount);
-gamma.Influence_Coeffs_b = zeros(geo.PanelCount);
+gamma2.Influence_Coeffs_a = zeros(meo.PanelCount);
+gamma2.Influence_Coeffs_b = zeros(meo.PanelCount);
 
 % Set infinite wake distance
-InfDist = 6*geo.b_ref;
+InfDist = 6*meo.b_ref;
 
-for i = 1:geo.PanelCount
+for i = 1:meo.PanelCount
     % Find panel normal
-    normal = PanelTool(i, geo.ReferencePanelMatrix, 'Normal');
+    normal = PanelTool(i, meo.ReferencePanelMatrix, 'Normal');
     
-    for j = 1:geo.PanelCount
+    for j = 1:meo.PanelCount
         % Call HSHOE_Panel to find induced velocity at collocation point
         % for a unit strength horseshoe vortex
-        Vp = HSHOE_Panel(i, j, 1, geo.ReferencePanelMatrix, InfDist);
+        Vp = HSHOE_Panel(i, j, 1, meo.ReferencePanelMatrix, InfDist);
 
         % Find dot product of induced velocity and normal vector, and
         % record as influence co-eff
-        gamma.Influence_Coeffs_a(i,j) = sum(conj(normal./norm(normal)).*Vp(1,:));
-        gamma.Influence_Coeffs_b(i,j) = sum(conj(normal./norm(normal)).*Vp(2,:));
+        gamma2.Influence_Coeffs_a(i,j) = sum(conj(normal./norm(normal)).*Vp(1,:));
+        gamma2.Influence_Coeffs_b(i,j) = sum(conj(normal./norm(normal)).*Vp(2,:));
         
         % Above lines are a more efficicent case of the following;
         % gamma.Influence_Coeffs_a(i,j) = dot(normal./norm(normal), Vp(1,:));
@@ -40,7 +40,7 @@ for i = 1:geo.PanelCount
     end
 
     % Update user-progress
-    if isequal(i/((geo.PanelCount)/10), round(i/((geo.PanelCount)/10))) == 1
+    if isequal(i/((meo.PanelCount)/10), round(i/((meo.PanelCount)/10))) == 1
         fprintf('\b.\n');
     end
 

@@ -1,4 +1,4 @@
-function [result, gamma] = solver(env, geo, gamma)
+function [result2, gamma2] = solver2(env2, meo, gamma2)
 
 % -------------------------------------------------------------------------
 % SwanVLM
@@ -12,33 +12,31 @@ function [result, gamma] = solver(env, geo, gamma)
 
 
 % Initialise the result struct variables
-result.CLift = [];
-result.CDrag = [];
-result.AlphaGeo = [];
-result.w_ind = [];
-result.gamma = [];
+result2.CLift = [];
+result2.CDrag = [];
+result2.AlphaGeo = [];
+result2.w_ind = [];
+result2.gamma = [];
 
 % Generate a row matrix of alpha's to solve for
-gamma.AlphaRange = env.AlphaMin:env.AlphaStep:env.AlphaMax;
+gamma2.AlphaRange = env2.AlphaMin:env2.AlphaStep:env2.AlphaMax;
 
 % Call Processor and Post-Processor for each alpha
-for i = 1:length(gamma.AlphaRange)
+for i = 1:length(gamma2.AlphaRange)
     % Convert alpha to rad's and set
-    env.alpha = (pi/180)*(gamma.AlphaRange(i));
+    env2.alpha = (pi/180)*(gamma2.AlphaRange(i));
 
     % Call the Processor
-    [gamma] = Processor(env, geo, gamma);
+    [gamma2] = Processor(env2, meo, gamma2);
 
     % Call the Post-Processor
-    [result] = PostProcess3(env, geo, gamma, result, 'InAlphaLoop');
+    [result2] = PostProcess3(env2, meo, gamma2, result2, 'InAlphaLoop');
     
     % Store each set of result for gamma (vortex strength)
-    result.gamma(:,i) = gamma.total(:,1);
+    result2.gamma(:,i) = gamma2.total(:,1);
 end
 
 
 % Call final post-processing routines
-[result] = PostProcess3(env, geo, gamma, result, 'PostAlphaLoop');
-[result] = PostProcess3(env, geo, gamma, result, 'FinalProcessing');
-
-end
+[result2] = PostProcess3(env2, meo, gamma2, result2, 'PostAlphaLoop');
+[result2] = PostProcess3(env2, meo, gamma2, result2, 'FinalProcessing');

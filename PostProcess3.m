@@ -1,7 +1,11 @@
-function [result,geo] = PostProcess3(env, geo, gamma, result, LocationOption)
+function [result] = PostProcess3(env, geo, gamma, result, LocationOption)
 
 % -------------------------------------------------------------------------
 % SwanVLM
+
+% Version 6 (EXPORT)
+% April 2020, Joan Ignasi Fontova(965420)
+
 % Version 5 (EXPORT)
 % April 2009
 % Copyright (C) 2008, 2009 Chris Walton (368404)
@@ -27,26 +31,18 @@ switch LocationOption
         % and drag
         for i = 1:length(gamma.total)
             % Calculate lift and drag values and store in PanelLift
-            PanelLift_i(i,1) = env.rho*env.V*gamma.total(i,1)*PanelTool(i, geo.ReferencePanelMatrix, 'Span');
-            PanelLift(i,1) = PanelLift_i(i,1)/((1-env.M^2)^0.5); %Prandtl-Glauert
-            %PanelLift(i,1) = PanelLift_i(i,1)./((1-env.M^2)^0.5+0.5*PanelLift_i(i,1)*env.M^2/((1+(1-env.M^2)^0.5))); %Karman-Tsien
-            PanelDrag_i(i,1) = env.rho*gamma.w_ind(i,1)*gamma.total(i,1)*PanelTool(i, geo.ReferencePanelMatrix, 'Span')/((1-env.M^2)^0.5);
-            PanelDrag(i,1) = PanelDrag_i(i,1)/((1-env.M^2)^0.5); %Prandtl-Glauert
-            %PanelDrag(i,1) = PanelDrag_i(i,1)./((1-env.M^2)^0.5+0.5*PanelDrag_i(i,1)*env.M^2/((1+(1-env.M^2)^0.5))); %Karman-Tsien
+            PanelLift(i,1) = env.rho*env.V*gamma.total(i,1)*PanelTool(i, geo.ReferencePanelMatrix, 'Span');
+            PanelDrag(i,1) = env.rho*gamma.w_ind(i,1)*gamma.total(i,1)*PanelTool(i, geo.ReferencePanelMatrix, 'Span');
         end
-        
+
         % Add up all panel lift and areas
         TotalLift = sum(PanelLift);
         TotalDrag = sum(PanelDrag);
-        env.Reynolds=geo.MeanAeroChords*env.V/env.nju;
-        Cfturb=(0.455)./(((1+0.144*env.M^2)^0.58)*log10(env.Reynolds).^(2.58));
-        result.Cf=(1-0.74*0.3)*Cfturb;
+
         % Store results
         Q = 0.5*env.rho*env.V^2;
-        result.CDrag(end+1) = TotalDrag/(Q*geo.S_ref)*geo.S_ref/geo.SurfaceAreas(1)+sum(2.*result.Cf.*geo.SurfaceAreas/geo.SurfaceAreas(1));
-        result.CDrag_total(end+1) = TotalDrag/(Q*geo.S_ref)*geo.S_ref/geo.SurfaceAreas(1);
-        result.CLift(end+1) = TotalLift/(Q*geo.S_ref)*geo.S_ref/geo.SurfaceAreas(1);
-        result.LtD_ratio(end+1)=result.CLift(end)./result.CDrag_total(end);
+        result.CDrag(end+1) = TotalDrag/(Q*geo.S_ref);
+        result.CLift(end+1) = TotalLift/(Q*geo.S_ref);
         result.AlphaGeo(end+1) = env.alpha*(180/pi);
         result.w_ind(end+1) = sum(gamma.w_ind);
 
@@ -91,10 +87,8 @@ switch LocationOption
         [AeroCentre] = FindAeroCentre(geo,env,result);
         
         % Non-dimensionalise results and return
-        result.StaticMargin = 100*((AeroCentre(1)-env.CofG(1))/geo.MeanAeroChords(1));
-        'Static Margin'
-        result.StaticMargin
-        result.CM_Alpha = result.CL_Alpha*((env.CofG(1)-AeroCentre(1))/geo.MeanAeroChords(1));
+        result.StaticMargin = 100*((AeroCentre(1)-env.CofG(1))/geo.c_ref);
+        result.CM_Alpha = result.CL_Alpha*((env.CofG(1)-AeroCentre(1))/geo.c_ref);
         result.AeroCentre = AeroCentre;
 end
 end

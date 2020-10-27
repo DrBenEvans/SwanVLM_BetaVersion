@@ -1,6 +1,10 @@
 function [gamma] = Processor(env, geo, gamma)
 % -------------------------------------------------------------------------
 % SwanVLM
+
+% Version 6 (EXPORT)
+% April 2020, Joan Ignasi Fontova(965420)
+
 % Version 5 (EXPORT)
 % April 2009
 % Copyright (C) 2008, 2009 Chris Walton (368404)
@@ -33,6 +37,7 @@ end
 
 % Solve full gamma matrix
 gamma.total = gamma.Influence_Coeffs_a\RHS;
+
 % Generate induced downwash matrix
 gamma.w_ind = gamma.Influence_Coeffs_b*gamma.total;
 end

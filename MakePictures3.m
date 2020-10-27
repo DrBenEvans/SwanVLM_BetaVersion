@@ -1,4 +1,4 @@
-function MakePictures(result,geo,env,gamma)
+function MakePictures3(result,geo,env,gamma)
 
 % -------------------------------------------------------------------------
 % SwanVLM
@@ -51,14 +51,14 @@ zlabel('Wing x co-ordinate')
 hold off
 
 % Result coeff's plotting...
-figure
-subplot(2,1,1)
+figure(10)
+subplot(3,1,1)
 plot(result.AlphaGeo,result.CLift)
 title(sprintf('CL vs Alpha_G_e_o for file: %s', geo.UserFileName))
 xlabel('Alpha_G_e_o (Deg)')
 ylabel('C_L')
 
-subplot(2,1,2)
+subplot(3,1,2)
 plot(result.AlphaGeo,result.CDrag)
 title('C_D vs Alpha_G_e_o')
 xlabel('Alpha_G_e_o (Deg)')
@@ -165,41 +165,5 @@ winsize(1:2) = [0 0];
 M = getframe(figure(50),winsize);
 
 hold off
-
-
-[a,b]=size(C);
-lift=zeros(a,1);
-for iy=1:a
-    area=0.0;
-    for ix=1:b
-        if(isnan(C(iy,ix))==0)
-            lift(iy)=(lift(iy)+C(iy,ix)*X(1,2)*Y(2,1));
-            area=area+X(1,2)*Y(2,1);    
-        end
-    end
-    lift(iy)=lift(iy)/X(1,2);
-
-    
-end
-
-
-C(isnan(C))=0;
-
-D = C ~= 0;
-
-S=sum(D,2);
-
-T=S*X(1,2);
-N=T.';
-
-lift2=lift*N;
-
- 
-figure(70)
-plot(Y(:,1),lift2)
-xlabel('Wingspan [m]')
-ylabel('Lift per unit span [N/m]')
-title('Spanwise Lift Distribution')
-grid minor
 
 end

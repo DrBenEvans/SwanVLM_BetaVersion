@@ -14,20 +14,20 @@ switch nargin
     case 1
         switch varargin{1}
             case 1
-                disp(sprintf('\nReading Configuration...'));
+                fprintf('\nReading Configuration...\n');
             case 2
-                disp(sprintf('\b COMPLETE'));
-                disp(sprintf('Generating Mesh...'));
+                fprintf('\b COMPLETE\n');
+                fprintf('Generating Mesh...\n');
             case 3
-                disp(sprintf('\b COMPLETE'));
-                disp(sprintf('Generating Influence Matrix/Alpha Sweeping'));
+                fprintf('\b COMPLETE\n');
+                fprintf('Generating Influence Matrix/Alpha Sweeping\n');
             case 4
-                disp(sprintf('\b COMPLETE'));
-                disp(sprintf('Post Processing...'))
+                fprintf('\b COMPLETE\n');
+                fprintf('Post Processing...\n')
             case 6
-                disp(sprintf('\nFile does not exist!\n'));
+                fprintf('\nFile does not exist!\n\n');
             case 7
-                disp(sprintf('\b COMPLETE'));
+                fprintf('\b COMPLETE\n');
         end
 
     case 2

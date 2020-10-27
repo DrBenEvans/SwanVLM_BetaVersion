@@ -1,7 +1,11 @@
-function [FileLocation, FileExists, UserFileName] = InputConfig(InputRelPath)
+function [FileLocation, FileExists, UserFileName] = InputConfig1(InputRelPath)
 
 % -------------------------------------------------------------------------
 % SwanVLM
+
+% Version 6 (EXPORT)
+% April 2020, Joan Ignasi Fontova(965420)
+
 % Version 5 (EXPORT)
 % April 2009
 % Copyright (C) 2008, 2009 Chris Walton (368404)
@@ -10,7 +14,7 @@ function [FileLocation, FileExists, UserFileName] = InputConfig(InputRelPath)
 % if it exists.
 % -------------------------------------------------------------------------
 
-UserFileName = input('Horizontal Geometry Configuration File Name: ', 's');
+UserFileName = input('Vertical Geometry Configuration File Name: ', 's');
 FileLocation = [InputRelPath UserFileName '.xls'];
 
 if exist(FileLocation, 'file') == 2

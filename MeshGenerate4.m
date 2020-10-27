@@ -1,4 +1,4 @@
-function [geo] = MeshGenerate3(FileName, geo)
+function [meo] = MeshGenerate4(FileName, meo)
 
 % -------------------------------------------------------------------------
 % SwanVLM
@@ -19,16 +19,16 @@ function [geo] = MeshGenerate3(FileName, geo)
 
 
 %**********************MESHING OPTIONS HERE**********************
-chordwise_panels = geo.chordwisepanels;
-spanwise_panels = round(geo.totalpanels/geo.chordwisepanels);
+chordwise_panels = meo.chordwisepanels;
+spanwise_panels = round(meo.totalpanels/meo.chordwisepanels);
 %****************************************************************
 
 % Load configuration from excel file using function ExcelConfigRead
 [RefPoint, RootProfile, RootChord, TipProfile, TipChord, Span, Sweep, Dihedral, GeoProps, RootIncidence, TipIncidence, Mirrored, Inverted] = ExcelConfigRead(FileName);
 
 % Set initial variables values
-geo.PanelCount = 0;
-geo.ReferencePanelMatrix = [];
+meo.PanelCount = 0;
+meo.ReferencePanelMatrix = [];
 BoundPanelLoopCount = 1;
 RefPanelLoopCount = 1;
 ActPanelLoopCount = 1;
@@ -38,10 +38,10 @@ ActPanelLoopCount = 1;
 for i = 1:max(GeoProps(:,1))
 
     % Total panel counting logic
-    if isempty(geo.ReferencePanelMatrix) == 1
+    if isempty(meo.ReferencePanelMatrix) == 1
         LenPanelMatrix1 = 4;
     else
-        LenPanelMatrix1 = length(geo.ReferencePanelMatrix);
+        LenPanelMatrix1 = length(meo.ReferencePanelMatrix);
     end
 
     % Reading data from excel derived arrays on a section by section
@@ -86,7 +86,7 @@ for i = 1:max(GeoProps(:,1))
 
         % Call SectionCoOrds to generate co-ords from recalled data
         [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPoint, SectionRootProfile, SectionRootChord, SectionTipProfile, SectionTipChord, SectionSpan, SectionSweep, SectionDihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip,SectionRootIncidence,SectionTipIncidence,1,1);
-        geo.b_ref = SectionSpan(1) * ScalingRatio;
+        meo.b_ref = SectionSpan(1) * ScalingRatio;
 
         % Section position correction from using values from previous loop - Ensures that the sections line up
         % correctly
@@ -104,10 +104,10 @@ for i = 1:max(GeoProps(:,1))
                 C = TempSectionCoOrds((((k)*(spanwise_panels+1))+1)+(l), :);
                 D = TempSectionCoOrds((((k)*(spanwise_panels+1))+1)+(l-1), :);
 
-                geo.BoundaryPanelMatrix(BoundPanelLoopCount,:) = A;
-                geo.BoundaryPanelMatrix(BoundPanelLoopCount+1,:) = B;
-                geo.BoundaryPanelMatrix(BoundPanelLoopCount+2,:) = C;
-                geo.BoundaryPanelMatrix(BoundPanelLoopCount+3,:) = D;
+                meo.BoundaryPanelMatrix(BoundPanelLoopCount,:) = A;
+                meo.BoundaryPanelMatrix(BoundPanelLoopCount+1,:) = B;
+                meo.BoundaryPanelMatrix(BoundPanelLoopCount+2,:) = C;
+                meo.BoundaryPanelMatrix(BoundPanelLoopCount+3,:) = D;
 
                 % Increment matrix position pointer up for next loop
                 BoundPanelLoopCount = BoundPanelLoopCount + 4;
@@ -139,10 +139,10 @@ for i = 1:max(GeoProps(:,1))
                 C = TempSectionCoOrds((((k)*(spanwise_panels+1))+1)+(l), :);
                 D = TempSectionCoOrds((((k)*(spanwise_panels+1))+1)+(l-1), :);
 
-                geo.ReferencePanelMatrix(RefPanelLoopCount,:) = A;
-                geo.ReferencePanelMatrix(RefPanelLoopCount+1,:) = B;
-                geo.ReferencePanelMatrix(RefPanelLoopCount+2,:) = C;
-                geo.ReferencePanelMatrix(RefPanelLoopCount+3,:) = D;
+                meo.ReferencePanelMatrix(RefPanelLoopCount,:) = A;
+                meo.ReferencePanelMatrix(RefPanelLoopCount+1,:) = B;
+                meo.ReferencePanelMatrix(RefPanelLoopCount+2,:) = C;
+                meo.ReferencePanelMatrix(RefPanelLoopCount+3,:) = D;
 
                 % Increment matrix position pointer up for next loop
                 RefPanelLoopCount = RefPanelLoopCount + 4;
@@ -156,7 +156,7 @@ for i = 1:max(GeoProps(:,1))
         [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPoint, SectionRootProfile, SectionRootChord, SectionTipProfile, SectionTipChord, SectionSpan, SectionSweep, SectionDihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip,SectionRootIncidence,SectionTipIncidence,0,0);
         
         if (i == 1) && (j == 1)
-            geo.c_ref = SectionRootChord;
+            meo.c_ref = SectionRootChord;
         end
         
         % Section position correction - Ensures that the sections line up
@@ -178,10 +178,10 @@ for i = 1:max(GeoProps(:,1))
                 C = TempSectionCoOrds((((k)*(spanwise_panels+1))+1)+(l), :);
                 D = TempSectionCoOrds((((k)*(spanwise_panels+1))+1)+(l-1), :);
 
-                geo.ActualPanelMatrix(ActPanelLoopCount,:) = A;
-                geo.ActualPanelMatrix(ActPanelLoopCount+1,:) = B;
-                geo.ActualPanelMatrix(ActPanelLoopCount+2,:) = C;
-                geo.ActualPanelMatrix(ActPanelLoopCount+3,:) = D;
+                meo.ActualPanelMatrix(ActPanelLoopCount,:) = A;
+                meo.ActualPanelMatrix(ActPanelLoopCount+1,:) = B;
+                meo.ActualPanelMatrix(ActPanelLoopCount+2,:) = C;
+                meo.ActualPanelMatrix(ActPanelLoopCount+3,:) = D;
 
                 % Increment matrix position pointer up for next loop
                 ActPanelLoopCount = ActPanelLoopCount + 4;
@@ -196,18 +196,18 @@ for i = 1:max(GeoProps(:,1))
         SectionRefPoint = TempSectionCoOrds(spanwise_panels+1,:);
 
         % Increment total panel counter
-        geo.PanelCount = geo.PanelCount + (spanwise_panels*chordwise_panels);
+        meo.PanelCount = meo.PanelCount + (spanwise_panels*chordwise_panels);
     end
 
     % Update Wing Panel Address Matrix
-    LenPanelMatrix2 = length(geo.ReferencePanelMatrix);
-    geo.PanelWingAddress(i,1) = i;
+    LenPanelMatrix2 = length(meo.ReferencePanelMatrix);
+    meo.PanelWingAddress(i,1) = i;
     if i == 1
-        geo.PanelWingAddress(i,2) = (LenPanelMatrix1/4);
+        meo.PanelWingAddress(i,2) = (LenPanelMatrix1/4);
     else
-        geo.PanelWingAddress(i,2) = (LenPanelMatrix1/4)+1;
+        meo.PanelWingAddress(i,2) = (LenPanelMatrix1/4)+1;
     end
-    geo.PanelWingAddress(i,3) = LenPanelMatrix2/4;
+    meo.PanelWingAddress(i,3) = LenPanelMatrix2/4;
     
 end
 
@@ -217,46 +217,46 @@ end
 [m n] = size(Mirrored);
 for i = 1:m
     if Mirrored(i) == 1
-        StartPanel = geo.PanelWingAddress(i,2);
-        EndPanel = geo.PanelWingAddress(i,3);
-        geo.PanelWingAddress(i,4) = (length(geo.ReferencePanelMatrix)/4)+1;
+        StartPanel = meo.PanelWingAddress(i,2);
+        EndPanel = meo.PanelWingAddress(i,3);
+        meo.PanelWingAddress(i,4) = (length(meo.ReferencePanelMatrix)/4)+1;
         for j = StartPanel:EndPanel
-            [ABCD] = OrdRecall(j, geo.ReferencePanelMatrix);
+            [ABCD] = OrdRecall(j, meo.ReferencePanelMatrix);
             ABCD(:,2) = -ABCD(:,2);
-            geo.ReferencePanelMatrix(end+1,:) = ABCD(1,:);
-            geo.ReferencePanelMatrix(end+1,:) = ABCD(2,:);
-            geo.ReferencePanelMatrix(end+1,:) = ABCD(3,:);
-            geo.ReferencePanelMatrix(end+1,:) = ABCD(4,:);
+            meo.ReferencePanelMatrix(end+1,:) = ABCD(1,:);
+            meo.ReferencePanelMatrix(end+1,:) = ABCD(2,:);
+            meo.ReferencePanelMatrix(end+1,:) = ABCD(3,:);
+            meo.ReferencePanelMatrix(end+1,:) = ABCD(4,:);
 
-            [ABCD] = OrdRecall(j, geo.BoundaryPanelMatrix);
+            [ABCD] = OrdRecall(j, meo.BoundaryPanelMatrix);
             ABCD(:,2) = -ABCD(:,2);
-            geo.BoundaryPanelMatrix(end+1,:) = ABCD(1,:);
-            geo.BoundaryPanelMatrix(end+1,:) = ABCD(2,:);
-            geo.BoundaryPanelMatrix(end+1,:) = ABCD(3,:);
-            geo.BoundaryPanelMatrix(end+1,:) = ABCD(4,:);
+            meo.BoundaryPanelMatrix(end+1,:) = ABCD(1,:);
+            meo.BoundaryPanelMatrix(end+1,:) = ABCD(2,:);
+            meo.BoundaryPanelMatrix(end+1,:) = ABCD(3,:);
+            meo.BoundaryPanelMatrix(end+1,:) = ABCD(4,:);
             
-            [ABCD] = OrdRecall(j, geo.ActualPanelMatrix);
+            [ABCD] = OrdRecall(j, meo.ActualPanelMatrix2);
             ABCD(:,2) = -ABCD(:,2);
-            geo.ActualPanelMatrix(end+1,:) = ABCD(1,:);
-            geo.ActualPanelMatrix(end+1,:) = ABCD(2,:);
-            geo.ActualPanelMatrix(end+1,:) = ABCD(3,:);
-            geo.ActualPanelMatrix(end+1,:) = ABCD(4,:);
+            meo.ActualPanelMatrix(end+1,:) = ABCD(1,:);
+            meo.ActualPanelMatrix(end+1,:) = ABCD(2,:);
+            meo.ActualPanelMatrix(end+1,:) = ABCD(3,:);
+            meo.ActualPanelMatrix(end+1,:) = ABCD(4,:);
             
-            geo.PanelCount = geo.PanelCount+1;
+            meo.PanelCount = meo.PanelCount+1;
         end
-        geo.PanelWingAddress(i,5) = (length(geo.ReferencePanelMatrix)/4);
+        meo.PanelWingAddress(i,5) = (length(meo.ReferencePanelMatrix)/4);
     end
 end
 
 % Determine S_ref
-geo.S_ref = 0;
-for i = geo.PanelWingAddress(1,2):geo.PanelWingAddress(1,3)
-    geo.S_ref = geo.S_ref + PanelTool(i,geo.ReferencePanelMatrix, 'Area');
+meo.S_ref = 0;
+for i = meo.PanelWingAddress(1,2):meo.PanelWingAddress(1,3)
+    meo.S_ref = meo.S_ref + PanelTool(i,meo.ReferencePanelMatrix, 'Area');
 end
 
 % Apply correction to S_ref for mirrored surfaces
 if Mirrored(1) == 1
-    geo.S_ref = geo.S_ref*2;
+    meo.S_ref = meo.S_ref*2;
 end
 
 end

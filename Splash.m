@@ -2,6 +2,10 @@ function Splash
 
 % -------------------------------------------------------------------------
 % SwanVLM
+
+% Version 6 (EXPORT)
+% April 2020, Joan Ignasi Fontova(965420)
+
 % Version 5 (EXPORT)
 % April 2009
 % Copyright (C) 2008, 2009 Chris Walton (368404)
@@ -12,10 +16,17 @@ function Splash
 disp(' ')
 disp('SwanVLM')
 disp('The 3D Aerodynamics of Lifting Surfaces Using Vortex Lattice Methods')
-disp('Version 5.0 (EXPORT)')
+disp(' ')
+disp('Version 6.0 (EXPORT)')
+disp('Joan Ignasi Fontova - 965420 - Swansea University')
+disp('Copyright (C) 2020 Swansea University')
+disp(' ')
+disp('Developed from Version 5.0 (EXPORT):')
 disp('Chris Walton - 368404 - Swansea University')
-disp('Copyright (C) 2008-2009: Chris Walton')
 disp(' ')
 disp(' ')
-disp('Please ensure that the input file is closed before proceeding!')
+disp('Please ensure that all the input files are closed before proceeding with the modelling!')
+disp(' ')
+disp(' ')
+
 end
