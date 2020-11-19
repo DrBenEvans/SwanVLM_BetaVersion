@@ -183,20 +183,21 @@ for iy=1:a
 end
 
 
-C(isnan(C))=0;
+%C(isnan(C))=0;
 
-D = C ~= 0;
+%D = C ~= 0;
 
-S=sum(D,2);
+%S=sum(D,2);
 
-T=S*X(1,2);
-N=T.';
+%T=S*X(1,2);
+%N=T.';
 
-lift2=lift*N;
+%lift2=lift*N;
 
  
 figure(70)
-plot(Y(:,1),lift2)
+plot(Y(:,1),lift)
+hold on
 xlabel('Wingspan [m]')
 ylabel('Lift per unit span [N/m]')
 title('Spanwise Lift Distribution')
