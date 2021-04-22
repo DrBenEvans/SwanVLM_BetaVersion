@@ -57,12 +57,14 @@ plot(result.AlphaGeo,result.CLift)
 title(sprintf('CL vs Alpha_G_e_o for file: %s', geo.UserFileName))
 xlabel('Alpha_G_e_o (Deg)')
 ylabel('C_L')
+grid on
 
 subplot(3,1,2)
 plot(result.AlphaGeo,result.CDrag)
 title('C_D vs Alpha_G_e_o')
 xlabel('Alpha_G_e_o (Deg)')
 ylabel('C_D')
+grin on
 end
 
 

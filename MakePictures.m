@@ -57,12 +57,14 @@ plot(result.AlphaGeo,result.CLift)
 title(sprintf('CL vs Alpha_G_e_o for file: %s', geo.UserFileName))
 xlabel('Alpha_G_e_o (Deg)')
 ylabel('C_L')
+grid on
 
 subplot(2,1,2)
 plot(result.AlphaGeo,result.CDrag)
 title('C_D vs Alpha_G_e_o')
 xlabel('Alpha_G_e_o (Deg)')
 ylabel('C_D')
+grid on
 end
 
 
@@ -183,24 +185,31 @@ for iy=1:a
 end
 
 
-%C(isnan(C))=0;
+C(isnan(C))=0;
 
-%D = C ~= 0;
+D = C ~= 0;
 
-%S=sum(D,2);
+S=sum(D,2);
 
-%T=S*X(1,2);
-%N=T.';
+T=S*X(1,2);
+N=T.';
 
-%lift2=lift*N;
-
+lift2=lift*N;
  
+aoas = [env.AlphaMin:env.AlphaStep:env.AlphaMax];
+aoas = string(aoas);
+numaoa = ((env.AlphaMax/env.AlphaStep) + 1);
+
+
 figure(70)
 plot(Y(:,1),lift)
 hold on
 xlabel('Wingspan [m]')
 ylabel('Lift per unit span [N/m]')
 title('Spanwise Lift Distribution')
+grid on
 grid minor
-
+for leg = 1:numaoa
+    legend('Alpha = '+aoas(1:numaoa))
+end
 end
