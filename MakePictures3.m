@@ -64,7 +64,7 @@ plot(result.AlphaGeo,result.CDrag)
 title('C_D vs Alpha_G_e_o')
 xlabel('Alpha_G_e_o (Deg)')
 ylabel('C_D')
-grin on
+grid on
 end
 
 

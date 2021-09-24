@@ -32,7 +32,8 @@ geo.ReferencePanelMatrix = [];
 BoundPanelLoopCount = 1;
 RefPanelLoopCount = 1;
 ActPanelLoopCount = 1;
-
+CurSec = 1;
+ScalingRatio = 1/RootChord;
 
 % Mesh Generation Loop
 for i = 1:max(GeoProps(:,1))
@@ -50,8 +51,12 @@ for i = 1:max(GeoProps(:,1))
         % If first section of a wing, set ref point, root profile and root chord from excel file...
         if j == 1
             SectionRefPoint = RefPoint(i,:);
+            SectionRefPointBound = RefPoint(i,:);
+            SectionRefPointRef = RefPoint(i,:);
+            SectionRefPointAct = RefPoint(i,:);
             SectionRootProfile = char(RootProfile{i});
             SectionRootChord = RootChord(i);
+            SectionRootChordAct = RootChord(i);
             SectionRootIncidence = RootIncidence(i);
         end
         
@@ -59,13 +64,16 @@ for i = 1:max(GeoProps(:,1))
         if j > 1
             SectionRootProfile = char(TipProfile{i,j-1});
             SectionRootChord = TipChord(i,j-1);
+            SectionRootChordAct = TipChord(i,j-1);
             SectionRootIncidence = TipIncidence(i,j-1);
         end
 
         % Set the remaining section variables
         SectionTipProfile = char(TipProfile{i,j});
         SectionTipChord = TipChord(i,j);
+        SectionTipChordAct = TipChord(i,j);
         SectionSpan = Span(i,j);
+        SectionSpanAct = Span(i,j);
         SectionSweep = Sweep(i,j);
         SectionDihedral = Dihedral(i,j);
         SectionTipIncidence = TipIncidence(i,j);
@@ -83,14 +91,21 @@ for i = 1:max(GeoProps(:,1))
         else
             NACASwitchTip = 0;
         end
-
+       
+%         if CurSec ~= 1
+%             ScalingRatio = ScalingRatioBoundary;
+%         else
+%         end
+        
         % Call SectionCoOrds to generate co-ords from recalled data
-        [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPoint, SectionRootProfile, SectionRootChord, SectionTipProfile, SectionTipChord, SectionSpan, SectionSweep, SectionDihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip,SectionRootIncidence,SectionTipIncidence,1,1);
+        [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPointBound, SectionRootProfile, SectionRootChord, SectionTipProfile, SectionTipChord, SectionSpan, SectionSweep, SectionDihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip,SectionRootIncidence,SectionTipIncidence,1,1,CurSec,ScalingRatio);
         geo.b_ref = SectionSpan(1) * ScalingRatio;
+        
+        ScalingRatioBoundary = ScalingRatio;
 
         % Section position correction from using values from previous loop - Ensures that the sections line up
         % correctly
-        DeltaRef = TempSectionCoOrds(1,:) - SectionRefPoint;
+        DeltaRef = TempSectionCoOrds(1,:) - SectionRefPointBound;
         [A B] = size(TempSectionCoOrds);
         DeltaRefMatrix = ones(A, B);
         DeltaRefMatrix = [DeltaRefMatrix(:,1).*DeltaRef(1) DeltaRefMatrix(:,2).*DeltaRef(2) DeltaRefMatrix(:,3).*DeltaRef(3)];
@@ -115,14 +130,21 @@ for i = 1:max(GeoProps(:,1))
         end
         % ********END Boundary Panel Matrix Generation********
 
-
-
+        SectionRefPointBound = TempSectionCoOrds(spanwise_panels+1,:);
+        
+%         if CurSec ~= 1
+%             ScalingRatio = ScalingRatioReference;
+%         else
+%         end
+       
         % ********START Reference Panel Matrix Generation********
-        [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPoint, 'flat', SectionRootChord, 'flat', SectionTipChord, SectionSpan, 0, SectionDihedral, chordwise_panels, spanwise_panels, 0, 0,SectionRootIncidence,SectionTipIncidence,1,1);
+        [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPointRef, 'flat', SectionRootChord, 'flat', SectionTipChord, SectionSpan, 0, SectionDihedral, chordwise_panels, spanwise_panels, 0, 0,SectionRootIncidence,SectionTipIncidence,1,1,CurSec,ScalingRatio);
 
+        ScalingRatioReference = ScalingRatio;
+        
         % Section position correction - Ensures that the sections line up
         % correctly
-        DeltaRef = TempSectionCoOrds(1,:) - SectionRefPoint;
+        DeltaRef = TempSectionCoOrds(1,:) - SectionRefPointRef;
 
         [A B] = size(TempSectionCoOrds);
         DeltaRefMatrix = ones(A, B);
@@ -150,18 +172,18 @@ for i = 1:max(GeoProps(:,1))
         end
         % END ***Reference Panel Matrix Generation***
         
-        
+        SectionRefPointRef = TempSectionCoOrds(spanwise_panels+1,:);        
         
         % ********START Actual Panel Matrix Generation********
-        [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPoint, SectionRootProfile, SectionRootChord, SectionTipProfile, SectionTipChord, SectionSpan, SectionSweep, SectionDihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip,SectionRootIncidence,SectionTipIncidence,0,0);
+        [TempSectionCoOrds, ScalingRatio] = SectionCoOrds(SectionRefPointAct, SectionRootProfile, SectionRootChordAct, SectionTipProfile, SectionTipChordAct, SectionSpanAct, SectionSweep, SectionDihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip,SectionRootIncidence,SectionTipIncidence,0,0,CurSec,ScalingRatio);
         
         if (i == 1) && (j == 1)
-            geo.c_ref = SectionRootChord;
+            geo.c_ref = SectionRootChordAct;
         end
         
         % Section position correction - Ensures that the sections line up
         % correctly
-        DeltaRef = TempSectionCoOrds(1,:) - SectionRefPoint;
+        DeltaRef = TempSectionCoOrds(1,:) - SectionRefPointAct;
 
         [A B] = size(TempSectionCoOrds);
         DeltaRefMatrix = ones(A, B);
@@ -193,10 +215,13 @@ for i = 1:max(GeoProps(:,1))
 
         % Take leading edge tip co-ords, and store as reference point for next
         % section
-        SectionRefPoint = TempSectionCoOrds(spanwise_panels+1,:);
+        SectionRefPointAct = TempSectionCoOrds(spanwise_panels+1,:);
 
         % Increment total panel counter
         geo.PanelCount = geo.PanelCount + (spanwise_panels*chordwise_panels);
+        
+        CurSec = CurSec + 1;
+            
     end
 
     % Update Wing Panel Address Matrix
@@ -208,6 +233,8 @@ for i = 1:max(GeoProps(:,1))
         geo.PanelWingAddress(i,2) = (LenPanelMatrix1/4)+1;
     end
     geo.PanelWingAddress(i,3) = LenPanelMatrix2/4;
+    
+
     
 end
 
@@ -323,7 +350,7 @@ end
 
 end
 
-function [Section_CoOrds, ScalingRatio] = SectionCoOrds(RefPoint, RootProfile, RootChord, TipProfile, TipChord, Span, Sweep, Dihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip, RootIncidence, TipIncidence, ScaleSwitch, TaperSwitch)
+function [Section_CoOrds, ScalingRatio] = SectionCoOrds(RefPoint, RootProfile, RootChord, TipProfile, TipChord, Span, Sweep, Dihedral, chordwise_panels, spanwise_panels, NACASwitchRoot, NACASwitchTip, RootIncidence, TipIncidence, ScaleSwitch, TaperSwitch, CurrentSection, ScalingRatio)
 
 % -------------------------------------------------------------------------
 % SectionCoOrds: Generates the co-ordinates of a wing cross-section, either
@@ -332,16 +359,22 @@ function [Section_CoOrds, ScalingRatio] = SectionCoOrds(RefPoint, RootProfile, R
 
 % ******************
 % If required, the section is scaled such that it has a unit length chord
-if ScaleSwitch == 1
-    ScalingRatio = 1/RootChord;
+% if CurrentSection == 1
+    if ScaleSwitch == 1
+        ScalingRatio = 1/RootChord;
 
-    RootChord = RootChord*ScalingRatio;
-    TipChord = TipChord*ScalingRatio;
-    Span = Span*ScalingRatio;
-else
-    ScalingRatio = 1;
-end
-
+        RootChord = RootChord*ScalingRatio;
+        TipChord = TipChord*ScalingRatio;
+        Span = Span*ScalingRatio;
+    else
+        ScalingRatio = 1;
+    end
+% else
+%     RootChord = RootChord*ScalingRatio;
+%     TipChord = TipChord*ScalingRatio;
+%     Span = Span*ScalingRatio;
+% end
+    
 if TaperSwitch == 1
     if RootChord ~= TipChord
         RootChord = (RootChord+TipChord)/2;

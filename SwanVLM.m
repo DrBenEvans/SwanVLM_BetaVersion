@@ -2,6 +2,8 @@ function SwanVLM
 clc; close ALL; clear;
 % -------------------------------------------------------------------------
 % SwanVLM
+% Version 7 (EXPORT)
+% April 2021, Yash Sooriyakanthan (970070)
 
 % Version 6 (EXPORT)
 % April 2020, Joan Ignasi Fontova(965420)
